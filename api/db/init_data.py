@@ -40,7 +40,7 @@ def encode_to_base64(input_string):
 
 def init_superuser():
     user_info = {
-        "id": uuid.uuid1().hex,
+        "id": uuid.uuid3(namespace=uuid.NAMESPACE_OID, name="admin").hex,
         "password": encode_to_base64("admin"),
         "nickname": "admin",
         "is_superuser": True,
@@ -50,7 +50,7 @@ def init_superuser():
     }
     tenant = {
         "id": user_info["id"],
-        "name": user_info["nickname"] + "‘s Kingdom",
+        "name": "Team",
         "llm_id": settings.CHAT_MDL,
         "embd_id": settings.EMBEDDING_MDL,
         "asr_id": settings.ASR_MDL,
@@ -93,6 +93,17 @@ def init_superuser():
         logging.error(
             "'{}' doesn't work!".format(
                 tenant["embd_id"]))
+
+
+def add_user_to_default_team(user_info):
+    tenant = TenantService.get_by_id(uuid.uuid3(namespace=uuid.NAMESPACE_OID, name="admin").hex)
+    usr_tenant = {
+        "tenant_id": tenant["id"],
+        "user_id": user_info["id"],
+        "invited_by": tenant["id"],
+        "role": UserTenantRole.ADMIN
+    }
+    UserTenantService.insert(**usr_tenant)
 
 
 def init_llm_factory():

@@ -645,15 +645,23 @@ export const initialAgentValues = {
   ...initialLlmBaseValues,
   description: '',
   user_prompt: '',
-  sys_prompt: ``,
+  sys_prompt: `<role>
+  You are {{agent_name}}, an AI assistant specialized in {{domain_or_task}}.
+</role>
+<instructions>
+  1. Understand the user’s request.  
+  2. Decompose it into logical subtasks.  
+  3. Execute each subtask step by step, reasoning transparently.  
+  4. Validate accuracy and consistency.  
+  5. Summarize the final result clearly.
+</instructions>`,
   prompts: [{ role: PromptRole.User, content: `{${AgentGlobals.SysQuery}}` }],
   message_history_window_size: 12,
   max_retries: 3,
   delay_after_error: 1,
   visual_files_var: '',
   max_rounds: 5,
-  exception_method: null,
-  exception_comment: '',
+  exception_method: '',
   exception_goto: [],
   exception_default_value: '',
   tools: [],
@@ -788,18 +796,8 @@ export const CategorizeAnchorPointPositions = [
 // no connection lines are allowed between key and value
 export const RestrictedUpstreamMap = {
   [Operator.Begin]: [Operator.Relevant],
-  [Operator.Categorize]: [
-    Operator.Begin,
-    Operator.Categorize,
-    Operator.Answer,
-    Operator.Relevant,
-  ],
-  [Operator.Answer]: [
-    Operator.Begin,
-    Operator.Answer,
-    Operator.Message,
-    Operator.Relevant,
-  ],
+  [Operator.Categorize]: [Operator.Begin, Operator.Categorize, Operator.Answer],
+  [Operator.Answer]: [Operator.Begin, Operator.Answer, Operator.Message],
   [Operator.Retrieval]: [Operator.Begin, Operator.Retrieval],
   [Operator.Generate]: [Operator.Begin, Operator.Relevant],
   [Operator.Message]: [
@@ -809,9 +807,8 @@ export const RestrictedUpstreamMap = {
     Operator.Retrieval,
     Operator.RewriteQuestion,
     Operator.Categorize,
-    Operator.Relevant,
   ],
-  [Operator.Relevant]: [Operator.Begin, Operator.Answer, Operator.Relevant],
+  [Operator.Relevant]: [Operator.Begin, Operator.Answer],
   [Operator.RewriteQuestion]: [
     Operator.Begin,
     Operator.Message,
@@ -935,6 +932,7 @@ export const NoDebugOperatorsList = [
   Operator.Switch,
   Operator.Iteration,
   Operator.UserFillUp,
+  Operator.IterationStart,
 ];
 
 export enum NodeHandleId {
@@ -955,5 +953,4 @@ export enum VariableType {
 export enum AgentExceptionMethod {
   Comment = 'comment',
   Goto = 'goto',
-  Null = 'null',
 }

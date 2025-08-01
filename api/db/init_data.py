@@ -185,8 +185,8 @@ def init_web_data():
     start_time = time.time()
 
     init_llm_factory()
-    # if not UserService.get_all().count():
-    #    init_superuser()
+    if not UserService.get_or_none(id=uuid.uuid3(namespace=uuid.NAMESPACE_OID, name="admin").hex):
+       init_superuser()
 
     add_graph_templates()
     logging.info("init web data success:{}".format(time.time() - start_time))

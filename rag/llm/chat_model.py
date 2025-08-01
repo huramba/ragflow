@@ -32,14 +32,14 @@ from dashscope import Generation
 from ollama import Client
 from openai import OpenAI
 from openai.lib.azure import AzureOpenAI
-from strenum import StrEnum
+from enum import Enum
 from zhipuai import ZhipuAI
 
 from rag.nlp import is_chinese, is_english
 from rag.utils import num_tokens_from_string
 
 # Error message constants
-class LLMErrorCode(StrEnum):
+class LLMErrorCode(str, Enum):
     ERROR_RATE_LIMIT = "RATE_LIMIT_EXCEEDED"
     ERROR_AUTHENTICATION = "AUTH_ERROR"
     ERROR_INVALID_REQUEST = "INVALID_REQUEST"
@@ -54,7 +54,7 @@ class LLMErrorCode(StrEnum):
     ERROR_GENERIC = "GENERIC_ERROR"
 
 
-class ReActMode(StrEnum):
+class ReActMode(str, Enum):
     FUNCTION_CALL = "function_call"
     REACT = "react"
 

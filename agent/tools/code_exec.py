@@ -17,7 +17,7 @@ import base64
 import logging
 import os
 from abc import ABC
-from enum import StrEnum
+from enum import Enum
 from typing import Optional
 from pydantic import BaseModel, Field, field_validator
 from agent.tools.base import ToolParamBase, ToolBase, ToolMeta
@@ -25,7 +25,7 @@ from api import settings
 from api.utils.api_utils import timeout
 
 
-class Language(StrEnum):
+class Language(str, Enum):
     PYTHON = "python"
     NODEJS = "nodejs"
 

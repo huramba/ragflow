@@ -15,7 +15,7 @@
 #
 from enum import Enum
 from enum import IntEnum
-from strenum import StrEnum
+from enum import Enum
 
 
 class StatusEnum(Enum):
@@ -23,14 +23,14 @@ class StatusEnum(Enum):
     INVALID = "0"
 
 
-class UserTenantRole(StrEnum):
+class UserTenantRole(str, Enum):
     OWNER = 'owner'
     ADMIN = 'admin'
     NORMAL = 'normal'
     INVITE = 'invite'
 
 
-class TenantPermission(StrEnum):
+class TenantPermission(str, Enum):
     ME = 'me'
     TEAM = 'team'
 
@@ -40,7 +40,7 @@ class SerializedType(IntEnum):
     JSON = 2
 
 
-class FileType(StrEnum):
+class FileType(str, Enum):
     PDF = 'pdf'
     DOC = 'doc'
     VISUAL = 'visual'
@@ -51,7 +51,7 @@ class FileType(StrEnum):
 
 VALID_FILE_TYPES = {FileType.PDF, FileType.DOC, FileType.VISUAL, FileType.AURAL, FileType.VIRTUAL, FileType.FOLDER, FileType.OTHER}
 
-class LLMType(StrEnum):
+class LLMType(str, Enum):
     CHAT = 'chat'
     EMBEDDING = 'embedding'
     SPEECH2TEXT = 'speech2text'
@@ -60,14 +60,14 @@ class LLMType(StrEnum):
     TTS    = 'tts'
 
 
-class ChatStyle(StrEnum):
+class ChatStyle(str, Enum):
     CREATIVE = 'Creative'
     PRECISE = 'Precise'
     EVENLY = 'Evenly'
     CUSTOM = 'Custom'
 
 
-class TaskStatus(StrEnum):
+class TaskStatus(str, Enum):
     UNSTART = "0"
     RUNNING = "1"
     CANCEL = "2"
@@ -76,7 +76,7 @@ class TaskStatus(StrEnum):
 
 VALID_TASK_STATUS     = {TaskStatus.UNSTART, TaskStatus.RUNNING, TaskStatus.CANCEL, TaskStatus.DONE, TaskStatus.FAIL}
 
-class ParserType(StrEnum):
+class ParserType(str, Enum):
     PRESENTATION = "presentation"
     LAWS = "laws"
     MANUAL = "manual"
@@ -94,18 +94,18 @@ class ParserType(StrEnum):
     TAG = "tag"
 
 
-class FileSource(StrEnum):
+class FileSource(str, Enum):
     LOCAL = ""
     KNOWLEDGEBASE = "knowledgebase"
     S3 = "s3"
 
 
-class CanvasType(StrEnum):
+class CanvasType(str, Enum):
     ChatBot = "chatbot"
     DocBot = "docbot"
 
 
-class MCPServerType(StrEnum):
+class MCPServerType(str, Enum):
     SSE = "sse"
     STREAMABLE_HTTP = "streamable-http"
 

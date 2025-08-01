@@ -26,18 +26,18 @@ from starlette.applications import Starlette
 from starlette.middleware import Middleware
 from starlette.responses import JSONResponse, Response
 from starlette.routing import Mount, Route
-from strenum import StrEnum
+from enum import Enum
 
 import mcp.types as types
 from mcp.server.lowlevel import Server
 
 
-class LaunchMode(StrEnum):
+class LaunchMode(str, Enum):
     SELF_HOST = "self-host"
     HOST = "host"
 
 
-class Transport(StrEnum):
+class Transport(str, Enum):
     SSE = "sse"
     STEAMABLE_HTTP = "streamable-http"
 

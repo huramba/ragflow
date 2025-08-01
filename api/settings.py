@@ -66,6 +66,9 @@ kg_retrievaler = None
 # user registration switch
 REGISTER_ENABLED = 1
 
+# united namespace
+UNITED_NAMESPACE = int(os.environ.get("UNITED_NAMESPACE", "0"))
+
 
 # sandbox-executor-manager
 SANDBOX_ENABLED = 0

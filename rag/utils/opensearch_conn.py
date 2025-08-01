@@ -96,8 +96,11 @@ class OSConnection(DocStoreConnection):
             return True
         try:
             from opensearchpy.client import IndicesClient
-            return IndicesClient(self.os).create(index=indexName,
-                                                 body=self.mapping)
+            client = IndicesClient(self.os)
+            if not client.exists(index=indexName):
+                return client.create(index=indexName, body=self.mapping)
+            else:
+                return client.get(index=indexName)
         except Exception:
             logger.exception("OSConnection.createIndex error %s" % (indexName))
 

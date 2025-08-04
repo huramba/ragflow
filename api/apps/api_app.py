@@ -58,7 +58,8 @@ def new_token():
             return get_data_error_result(message="Tenant not found!")
 
         tenant_id = tenants[0].tenant_id
-        obj = {"tenant_id": tenant_id, "token": generate_confirmation_token(tenant_id),
+        obj = {"tenant_id": tenant_id,
+               "token": generate_confirmation_token(tenant_id),
                "create_time": current_timestamp(),
                "create_date": datetime_format(datetime.now()),
                "update_time": None,

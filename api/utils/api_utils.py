@@ -343,9 +343,9 @@ def get_error_operating_result(message="Operating error"):
     return get_result(code=settings.RetCode.OPERATING_ERROR, message=message)
 
 
-def generate_confirmation_token(tenant_id):
+def generate_confirmation_token(tenant_id, uuid=None):
     serializer = URLSafeTimedSerializer(tenant_id)
-    return "ragflow-" + serializer.dumps(get_uuid(), salt=tenant_id)[2:34]
+    return "ragflow-" + serializer.dumps(uuid or get_uuid(), salt=tenant_id)[2:34]
 
 
 def get_parser_config(chunk_method, parser_config):

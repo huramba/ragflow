@@ -19,18 +19,22 @@ import json
 import os
 import time
 import uuid
+from datetime import datetime
 from copy import deepcopy
 
 from api.db import LLMType, UserTenantRole
 from api.db.db_models import init_database_tables as init_web_db, LLMFactories, LLM, TenantLLM
 from api.db.services import UserService
+from api.db.services.api_service import APITokenService
 from api.db.services.canvas_service import CanvasTemplateService
 from api.db.services.document_service import DocumentService
 from api.db.services.knowledgebase_service import KnowledgebaseService
 from api.db.services.llm_service import LLMFactoriesService, LLMService, TenantLLMService, LLMBundle
 from api.db.services.user_service import TenantService, UserTenantService
 from api import settings
+from api.utils import current_timestamp, datetime_format
 from api.utils.file_utils import get_project_base_directory
+from api.utils.api_utils import generate_confirmation_token
 
 
 def encode_to_base64(input_string):
@@ -55,6 +59,7 @@ def init_superuser():
         "embd_id": settings.EMBEDDING_MDL,
         "asr_id": settings.ASR_MDL,
         "parser_ids": settings.PARSERS,
+        "rerank_id": settings.RERANK_MDL,
         "img2txt_id": settings.IMAGE2TEXT_MDL
     }
     usr_tenant = {
@@ -76,6 +81,7 @@ def init_superuser():
     TenantService.insert(**tenant)
     UserTenantService.insert(**usr_tenant)
     TenantLLMService.insert_many(tenant_llm)
+    add_default_api_token(user_info["id"])
     logging.info(
         "Super user initialized. email: admin@ragflow.io, password: admin. Changing the password after login is strongly recommended.")
 
@@ -95,15 +101,15 @@ def init_superuser():
                 tenant["embd_id"]))
 
 
-def add_user_to_default_team(user_info):
-    tenant = TenantService.get_by_id(uuid.uuid3(namespace=uuid.NAMESPACE_OID, name="admin").hex)
-    usr_tenant = {
-        "tenant_id": tenant["id"],
-        "user_id": user_info["id"],
-        "invited_by": tenant["id"],
-        "role": UserTenantRole.ADMIN
+def add_default_api_token(tenant_id):
+    obj = {
+        "tenant_id": tenant_id, "token": generate_confirmation_token(tenant_id),
+        "create_time": current_timestamp(),
+        "create_date": datetime_format(datetime.now()),
+        "update_time": None,
+        "update_date": None
     }
-    UserTenantService.insert(**usr_tenant)
+    APITokenService.save(**obj)
 
 
 def init_llm_factory():

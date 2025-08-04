@@ -593,32 +593,22 @@ def rollback_user_registration(user_id):
 
 def user_register(user_id, user):
     user["id"] = user_id
-    if settings.UNITED_NAMESPACE:
-        tenant = None
-        adm_id = uuid.uuid3(namespace=uuid.NAMESPACE_OID, name="admin").hex
-        usr_tenant = {
-            "tenant_id": adm_id,
-            "user_id": user_id,
-            "invited_by": adm_id,
-            "role": UserTenantRole.ADMIN
-        }
-    else:
-        tenant = {
-            "id": user_id,
-            "name": user["nickname"] + "‘s Kingdom",
-            "llm_id": settings.CHAT_MDL,
-            "embd_id": settings.EMBEDDING_MDL,
-            "asr_id": settings.ASR_MDL,
-            "parser_ids": settings.PARSERS,
-            "img2txt_id": settings.IMAGE2TEXT_MDL,
-            "rerank_id": settings.RERANK_MDL,
-        }
-        usr_tenant = {
-            "tenant_id": user_id,
-            "user_id": user_id,
-            "invited_by": user_id,
-            "role": UserTenantRole.OWNER,
-        }
+    tenant = {
+        "id": user_id,
+        "name": user["nickname"] + "‘s Kingdom",
+        "llm_id": settings.CHAT_MDL,
+        "embd_id": settings.EMBEDDING_MDL,
+        "asr_id": settings.ASR_MDL,
+        "parser_ids": settings.PARSERS,
+        "img2txt_id": settings.IMAGE2TEXT_MDL,
+        "rerank_id": settings.RERANK_MDL,
+    }
+    usr_tenant = {
+        "tenant_id": user_id,
+        "user_id": user_id,
+        "invited_by": user_id,
+        "role": UserTenantRole.OWNER,
+    }
     file_id = get_uuid()
     file = {
         "id": file_id,
@@ -664,6 +654,20 @@ def user_register(user_id, user):
     UserTenantService.insert(**usr_tenant)
     TenantLLMService.insert_many(tenant_llm)
     FileService.insert(file)
+
+    if settings.SINGLE_NAMESPACE:
+        adm_id = uuid.uuid3(namespace=uuid.NAMESPACE_OID, name="admin").hex
+        logging.info(f"Adding user {user_id} to admin tenant {adm_id}")
+        tenant = TenantService.get_by_id(pid=adm_id)
+        logging.info(str(tenant))
+        usr_tenant = {
+            "tenant_id": adm_id,
+            "user_id": user_id,
+            "invited_by": adm_id,
+            "role": UserTenantRole.ADMIN
+        }
+        UserTenantService.insert(**usr_tenant)
+
     return UserService.query(email=user["email"])
 
 

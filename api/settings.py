@@ -67,7 +67,7 @@ kg_retrievaler = None
 REGISTER_ENABLED = 1
 
 # united namespace
-UNITED_NAMESPACE = int(os.environ.get("UNITED_NAMESPACE", "0"))
+SINGLE_NAMESPACE = int(os.environ.get("SINGLE_NAMESPACE", "0"))
 
 
 # sandbox-executor-manager

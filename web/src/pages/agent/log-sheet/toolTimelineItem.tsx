@@ -12,14 +12,41 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { cn } from '@/lib/utils';
+import { isEmpty } from 'lodash';
 import { Operator } from '../constant';
-import OperatorIcon from '../operator-icon';
+import OperatorIcon, { SVGIconMap } from '../operator-icon';
 import {
   JsonViewer,
   toLowerCaseStringAndDeleteChar,
   typeMap,
 } from './workFlowTimeline';
+type IToolIcon =
+  | Operator.ArXiv
+  | Operator.GitHub
+  | Operator.Bing
+  | Operator.DuckDuckGo
+  | Operator.Google
+  | Operator.GoogleScholar
+  | Operator.PubMed
+  | Operator.TavilyExtract
+  | Operator.TavilySearch
+  | Operator.Wikipedia
+  | Operator.YahooFinance
+  | Operator.WenCai
+  | Operator.Crawler;
 
+const capitalizeWords = (str: string, separator: string = '_'): string[] => {
+  if (!str) return [''];
+
+  const resultStrArr = str.split(separator).map((word) => {
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  });
+  return resultStrArr;
+};
+const changeToolName = (toolName: any) => {
+  const name = 'Agent ' + capitalizeWords(toolName).join(' ');
+  return name;
+};
 const ToolTimelineItem = ({
   tools,
   sendLoading = false,
@@ -34,16 +61,7 @@ const ToolTimelineItem = ({
   const filteredTools = tools.filter(
     (tool) => !blackList.includes(tool.tool_name),
   );
-  const capitalizeWords = (str: string, separator: string = '_'): string => {
-    if (!str) return '';
 
-    return str
-      .split(separator)
-      .map((word) => {
-        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-      })
-      .join(' ');
-  };
   const parentName = (str: string, separator: string = '-->') => {
     if (!str) return '';
     const strs = str.split(separator);
@@ -56,6 +74,8 @@ const ToolTimelineItem = ({
   return (
     <>
       {filteredTools?.map((tool, idx) => {
+        const toolName = capitalizeWords(tool.tool_name, '_').join('');
+
         return (
           <TimelineItem
             key={'tool_' + idx}
@@ -100,7 +120,11 @@ const ToolTimelineItem = ({
                   <div className="size-6 flex items-center justify-center">
                     <OperatorIcon
                       className="size-4"
-                      name={'Agent' as Operator}
+                      name={
+                        (SVGIconMap[toolName as IToolIcon]
+                          ? toolName
+                          : 'Agent') as Operator
+                      }
                     ></OperatorIcon>
                   </div>
                 </div>
@@ -114,23 +138,23 @@ const ToolTimelineItem = ({
                   className="bg-background-card px-3"
                 >
                   <AccordionItem value={idx.toString()}>
-                    <AccordionTrigger>
+                    <AccordionTrigger
+                      hideDownIcon={isShare && isEmpty(tool.arguments)}
+                    >
                       <div className="flex gap-2 items-center">
                         {!isShare && (
                           <span>
                             {parentName(tool.path) + ' '}
-                            {capitalizeWords(tool.tool_name, '_')}
+                            {capitalizeWords(tool.tool_name, '_').join(' ')}
                           </span>
                         )}
                         {isShare && (
                           <span>
-                            {
-                              typeMap[
-                                toLowerCaseStringAndDeleteChar(
-                                  tool.tool_name,
-                                ) as keyof typeof typeMap
-                              ]
-                            }
+                            {typeMap[
+                              toLowerCaseStringAndDeleteChar(
+                                tool.tool_name,
+                              ) as keyof typeof typeMap
+                            ] ?? changeToolName(tool.tool_name)}
                           </span>
                         )}
                         <span className="text-text-sub-title text-xs">
@@ -139,29 +163,44 @@ const ToolTimelineItem = ({
                         </span>
                         <span
                           className={cn(
-                            'border-background  -end-1 -top-1 size-2 rounded-full border-2 bg-dot-green',
+                            'border-background  -end-1 -top-1 size-2 rounded-full bg-dot-green',
                           )}
                         >
                           <span className="sr-only">Online</span>
                         </span>
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent>
-                      <div className="space-y-2">
-                        {!isShare && (
+                    {!isShare && (
+                      <AccordionContent>
+                        <div className="space-y-2">
                           <JsonViewer
                             data={tool.result}
                             title="content"
                           ></JsonViewer>
-                        )}
-                        {isShare && (
-                          <JsonViewer
-                            data={tool.result}
-                            title={''}
-                          ></JsonViewer>
-                        )}
-                      </div>
-                    </AccordionContent>
+                        </div>
+                      </AccordionContent>
+                    )}
+                    {isShare && !isEmpty(tool.arguments) && (
+                      <AccordionContent>
+                        <div className="space-y-2 bg-muted p-2">
+                          {tool &&
+                            tool.arguments &&
+                            Object.entries(tool.arguments).length &&
+                            Object.entries(tool.arguments).map(([key, val]) => {
+                              return (
+                                <div key={key}>
+                                  <div className="text-sm font-medium leading-none">
+                                    {key}
+                                  </div>
+                                  <div className="text-sm text-muted-foreground mt-1">
+                                    {val as string}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                        </div>
+                      </AccordionContent>
+                    )}
                   </AccordionItem>
                 </Accordion>
               </section>

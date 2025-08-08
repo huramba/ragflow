@@ -21,7 +21,6 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { ThemeProvider, useTheme } from './components/theme-provider';
 import { SidebarProvider } from './components/ui/sidebar';
 import { TooltipProvider } from './components/ui/tooltip';
-import { ThemeEnum } from './constants/common';
 import storage from './utils/authorization-util';
 
 dayjs.extend(customParseFormat);
@@ -79,7 +78,7 @@ function Root({ children }: React.PropsWithChildren) {
         }}
         locale={locale}
       >
-        <SidebarProvider className="h-full">
+        <SidebarProvider>
           <App>{children}</App>
         </SidebarProvider>
         <Sonner position={'top-right'} expand richColors closeButton></Sonner>
@@ -102,10 +101,7 @@ const RootProvider = ({ children }: React.PropsWithChildren) => {
   return (
     <TooltipProvider>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider
-          defaultTheme={ThemeEnum.Light}
-          storageKey="ragflow-ui-theme"
-        >
+        <ThemeProvider defaultTheme="light" storageKey="ragflow-ui-theme">
           <Root>{children}</Root>
         </ThemeProvider>
       </QueryClientProvider>

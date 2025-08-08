@@ -15,7 +15,6 @@ import { FormTooltip } from '@/components/ui/tooltip';
 import { buildSelectOptions } from '@/utils/component-util';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
-import { memo } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
@@ -32,7 +31,7 @@ const ModeOptions = buildSelectOptions([
   AgentDialogueMode.Task,
 ]);
 
-function BeginForm({ node }: INextOperatorForm) {
+const BeginForm = ({ node }: INextOperatorForm) => {
   const { t } = useTranslation();
 
   const values = useValues(node);
@@ -123,7 +122,7 @@ function BeginForm({ node }: INextOperatorForm) {
             )}
           />
         )}
-        {mode === AgentDialogueMode.Conversational && enablePrologue && (
+        {enablePrologue && (
           <FormField
             control={form.control}
             name={'prologue'}
@@ -175,6 +174,7 @@ function BeginForm({ node }: INextOperatorForm) {
             deleteRecord={handleDeleteRecord}
           ></QueryTable>
         </Collapse>
+
         {visible && (
           <ParameterDialog
             hideModal={hideModal}
@@ -186,6 +186,6 @@ function BeginForm({ node }: INextOperatorForm) {
       </Form>
     </section>
   );
-}
+};
 
-export default memo(BeginForm);
+export default BeginForm;

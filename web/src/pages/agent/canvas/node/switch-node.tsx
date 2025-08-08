@@ -1,10 +1,10 @@
+import { IconFont } from '@/components/icon-font';
 import { Card, CardContent } from '@/components/ui/card';
 import { ISwitchCondition, ISwitchNode } from '@/interfaces/database/flow';
 import { NodeProps, Position } from '@xyflow/react';
 import { memo, useCallback } from 'react';
 import { NodeHandleId, SwitchOperatorOptions } from '../../constant';
-import { LogicalOperatorIcon } from '../../form/switch-form';
-import { useGetVariableLabelByValue } from '../../hooks/use-get-begin-query';
+import { useGetComponentLabelByValue } from '../../hooks/use-get-begin-query';
 import { CommonHandle } from './handle';
 import { RightHandleStyle } from './handle-icon';
 import NodeHeader from './node-header';
@@ -25,21 +25,16 @@ const getConditionKey = (idx: number, length: number) => {
 const ConditionBlock = ({
   condition,
   nodeId,
-}: { condition: ISwitchCondition } & { nodeId: string }) => {
+}: {
+  condition: ISwitchCondition;
+  nodeId: string;
+}) => {
   const items = condition?.items ?? [];
-  const getLabel = useGetVariableLabelByValue(nodeId);
+  const getLabel = useGetComponentLabelByValue(nodeId);
 
   const renderOperatorIcon = useCallback((operator?: string) => {
-    const item = SwitchOperatorOptions.find((x) => x.value === operator);
-    if (item) {
-      return (
-        <LogicalOperatorIcon
-          icon={item?.icon}
-          value={item?.value}
-        ></LogicalOperatorIcon>
-      );
-    }
-    return <></>;
+    const name = SwitchOperatorOptions.find((x) => x.value === operator)?.icon;
+    return <IconFont name={name!}></IconFont>;
   }, []);
 
   return (
@@ -64,8 +59,8 @@ const ConditionBlock = ({
 function InnerSwitchNode({ id, data, selected }: NodeProps<ISwitchNode>) {
   const { positions } = useBuildSwitchHandlePositions({ data, id });
   return (
-    <ToolBar selected={selected} id={id} label={data.label} showRun={false}>
-      <NodeWrapper selected={selected}>
+    <ToolBar selected={selected} id={id} label={data.label}>
+      <NodeWrapper>
         <CommonHandle
           type="target"
           position={Position.Left}
@@ -78,21 +73,18 @@ function InnerSwitchNode({ id, data, selected }: NodeProps<ISwitchNode>) {
           {positions.map((position, idx) => {
             return (
               <div key={idx}>
-                <section className="flex flex-col text-xs">
-                  <div className="text-right">
+                <section className="flex flex-col">
+                  <div className="flex justify-between">
+                    <span className="text-text-sub-title text-xs translate-y-2">
+                      {idx < positions.length - 1 &&
+                        position.condition?.logical_operator?.toUpperCase()}
+                    </span>
                     <span>{getConditionKey(idx, positions.length)}</span>
-                    <div className="text-text-sub-title">
-                      {idx < positions.length - 1 && position.text}
-                    </div>
                   </div>
-                  <span className="text-background-checked">
-                    {idx < positions.length - 1 &&
-                      position.condition?.logical_operator?.toUpperCase()}
-                  </span>
                   {position.condition && (
                     <ConditionBlock
-                      condition={position.condition}
                       nodeId={id}
+                      condition={position.condition}
                     ></ConditionBlock>
                   )}
                 </section>

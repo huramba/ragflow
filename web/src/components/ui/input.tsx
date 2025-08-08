@@ -4,12 +4,10 @@ import { cn } from '@/lib/utils';
 import { Search } from 'lucide-react';
 
 export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
-  value?: string | number | readonly string[] | undefined;
-}
+  extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, value, ...props }, ref) => {
+  ({ className, type, ...props }, ref) => {
     return (
       <input
         type={type}
@@ -18,7 +16,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className,
         )}
         ref={ref}
-        value={value ?? ''}
         {...props}
       />
     );
@@ -113,18 +110,3 @@ if (process.env.NODE_ENV !== 'production') {
 export const BlurInput = React.memo(InnerBlurInput);
 
 export { ExpandedInput, Input, SearchInput };
-
-type NumberInputProps = { onChange?(value: number): void } & InputProps;
-
-export const NumberInput = ({ onChange, ...props }: NumberInputProps) => {
-  return (
-    <Input
-      type="number"
-      onChange={(ev) => {
-        const value = ev.target.value;
-        onChange?.(value === '' ? 0 : Number(value)); // convert to number
-      }}
-      {...props}
-    ></Input>
-  );
-};

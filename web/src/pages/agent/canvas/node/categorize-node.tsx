@@ -19,7 +19,7 @@ export function InnerCategorizeNode({
   const { positions } = useBuildCategorizeHandlePositions({ data, id });
   return (
     <ToolBar selected={selected} id={id} label={data.label}>
-      <NodeWrapper selected={selected}>
+      <NodeWrapper>
         <CommonHandle
           type="target"
           position={Position.Left}
@@ -34,15 +34,15 @@ export function InnerCategorizeNode({
           <div className={'bg-background-card rounded-sm px-1'}>
             <LLMLabel value={get(data, 'form.llm_id')}></LLMLabel>
           </div>
-          {positions.map((position) => {
+          {positions.map((position, idx) => {
             return (
-              <div key={position.uuid}>
-                <div className={'bg-background-card rounded-sm p-1 truncate'}>
-                  {position.name}
+              <div key={idx}>
+                <div className={'bg-background-card rounded-sm p-1'}>
+                  {position.text}
                 </div>
                 <CommonHandle
-                  // key={position.text}
-                  id={position.uuid}
+                  key={position.text}
+                  id={position.text}
                   type="source"
                   position={Position.Right}
                   isConnectable

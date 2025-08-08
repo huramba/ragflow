@@ -24,7 +24,6 @@ export type CheckboxFormMultipleProps = {
   filters?: FilterCollection[];
   value?: FilterValue;
   onChange?: FilterChange;
-  onOpenChange?: (open: boolean) => void;
   setOpen(open: boolean): void;
 };
 
@@ -149,19 +148,12 @@ export function FilterPopover({
   children,
   value,
   onChange,
-  onOpenChange,
   filters,
 }: PropsWithChildren & Omit<CheckboxFormMultipleProps, 'setOpen'>) {
   const [open, setOpen] = useState(false);
-  const onOpenChangeFun = useCallback(
-    (e: boolean) => {
-      onOpenChange?.(e);
-      setOpen(e);
-    },
-    [onOpenChange],
-  );
+
   return (
-    <Popover open={open} onOpenChange={onOpenChangeFun}>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent className="p-0">
         <CheckboxFormMultiple

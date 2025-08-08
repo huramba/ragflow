@@ -10,21 +10,19 @@ interface IProps {
   id?: string;
   value?: string;
   onInitialValue?: (value: string, option: any) => void;
-  onChange?: (value: string) => void;
+  onChange?: (value: string, option: any) => void;
   disabled?: boolean;
-  filter?: string;
 }
 
 const NextInnerLLMSelect = forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   IProps
->(({ value, disabled, filter }, ref) => {
+>(({ value, disabled }, ref) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const modelTypes =
-    filter === 'all' || filter === undefined
-      ? [LlmModelType.Chat, LlmModelType.Image2text]
-      : [filter as LlmModelType];
-  const modelOptions = useComposeLlmOptionsByModelTypes(modelTypes);
+  const modelOptions = useComposeLlmOptionsByModelTypes([
+    LlmModelType.Chat,
+    LlmModelType.Image2text,
+  ]);
 
   return (
     <Select disabled={disabled} value={value}>
@@ -47,7 +45,7 @@ const NextInnerLLMSelect = forwardRef<
           </SelectTrigger>
         </PopoverTrigger>
         <PopoverContent side={'left'}>
-          <LlmSettingFieldItems options={modelOptions}></LlmSettingFieldItems>
+          <LlmSettingFieldItems></LlmSettingFieldItems>
         </PopoverContent>
       </Popover>
     </Select>

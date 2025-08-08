@@ -9,6 +9,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useUpdateKnowledge } from '@/hooks/knowledge-hooks';
 import { transformFile2Base64 } from '@/utils/file-util';
 import { Loader2Icon, Pencil, Upload } from 'lucide-react';
@@ -22,6 +23,7 @@ export function GeneralForm() {
   const { t } = useTranslation();
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarBase64Str, setAvatarBase64Str] = useState(''); // Avatar Image base64
+  // const [submitLoading, setSubmitLoading] = useState(false); // submit button loading
 
   const { saveKnowledgeConfiguration, loading: submitLoading } =
     useUpdateKnowledge();
@@ -79,26 +81,52 @@ export function GeneralForm() {
         />
         <FormField
           control={form.control}
+          name="description"
+          render={({ field }) => {
+            // null initialize empty string
+            if (typeof field.value === 'object' && !field.value) {
+              form.setValue('description', '  ');
+            }
+            return (
+              <FormItem className="items-center space-y-0">
+                <div className="flex">
+                  <FormLabel className="text-sm text-muted-foreground whitespace-nowrap w-1/4">
+                    {t('flow.description')}
+                  </FormLabel>
+                  <FormControl className="w-3/4">
+                    <Input {...field}></Input>
+                  </FormControl>
+                </div>
+                <div className="flex pt-1">
+                  <div className="w-1/4"></div>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            );
+          }}
+        />
+        <FormField
+          control={form.control}
           name="avatar"
-          render={() => (
+          render={({ field }) => (
             <FormItem className="items-center space-y-0">
               <div className="flex">
                 <FormLabel className="text-sm text-muted-foreground whitespace-nowrap w-1/4">
                   {t('setting.avatar')}
                 </FormLabel>
                 <FormControl className="w-3/4">
-                  <div className="flex justify-start items-end space-x-2">
+                  <>
                     <div className="relative group">
                       {!avatarBase64Str ? (
                         <div className="w-[64px] h-[64px] grid place-content-center border border-dashed	rounded-md">
                           <div className="flex flex-col items-center">
                             <Upload />
-                            <p>{t('common.upload')}</p>
+                            <p>Upload</p>
                           </div>
                         </div>
                       ) : (
                         <div className="w-[64px] h-[64px] relative grid place-content-center">
-                          <Avatar className="w-[64px] h-[64px] rounded-md">
+                          <Avatar className="w-[64px] h-[64px]">
                             <AvatarImage
                               className=" block"
                               src={avatarBase64Str}
@@ -132,10 +160,7 @@ export function GeneralForm() {
                         }}
                       />
                     </div>
-                    <div className="margin-1 text-muted-foreground">
-                      {t('knowledgeConfiguration.photoTip')}
-                    </div>
-                  </div>
+                  </>
                 </FormControl>
               </div>
               <div className="flex pt-1">
@@ -147,48 +172,54 @@ export function GeneralForm() {
         />
         <FormField
           control={form.control}
-          name="description"
-          render={({ field }) => {
-            // null initialize empty string
-            if (typeof field.value === 'object' && !field.value) {
-              form.setValue('description', '  ');
-            }
-            return (
-              <FormItem className="items-center space-y-0">
-                <div className="flex">
-                  <FormLabel className="text-sm text-muted-foreground whitespace-nowrap w-1/4">
-                    {t('flow.description')}
-                  </FormLabel>
-                  <FormControl className="w-3/4">
-                    <Input {...field}></Input>
-                  </FormControl>
-                </div>
-                <div className="flex pt-1">
-                  <div className="w-1/4"></div>
-                  <FormMessage />
-                </div>
-              </FormItem>
-            );
-          }}
+          name="permission"
+          render={({ field }) => (
+            <FormItem className="flex items-center space-y-0">
+              <FormLabel
+                className="text-sm text-muted-foreground whitespace-nowrap w-1/4"
+                tooltip={t('knowledgeConfiguration.permissionsTip')}
+              >
+                {t('knowledgeConfiguration.permissions')}
+              </FormLabel>
+              <FormControl className="w-3/4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  className="flex space-y-1 gap-5"
+                >
+                  <FormItem className="flex items-center space-x-1 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="me" />
+                    </FormControl>
+                    <FormLabel className="font-normal">
+                      {t('knowledgeConfiguration.me')}
+                    </FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-1 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="team" />
+                    </FormControl>
+                    <FormLabel className="font-normal">
+                      {t('knowledgeConfiguration.team')}
+                    </FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
       </FormContainer>
-      <div className="text-right pt-4 flex justify-end gap-3">
-        <Button
-          type="reset"
-          className="bg-transparent text-color-white hover:bg-transparent border-gray-500 border-[1px]"
-          onClick={() => {
-            form.reset();
-          }}
-        >
-          {t('knowledgeConfiguration.cancel')}
-        </Button>
+      <div className="text-right pt-4">
         <Button
           type="button"
           disabled={submitLoading}
           onClick={() => {
+            // console.log('form.formControl: ', form.formState.values);
             (async () => {
               let isValidate = await form.formControl.trigger('name');
-              const { name, description } = form.formState.values;
+              // console.log(isValidate);
+              const { name, description, permission } = form.formState.values;
               const avatar = avatarBase64Str;
 
               if (isValidate) {
@@ -197,6 +228,7 @@ export function GeneralForm() {
                   parser_id,
                   name,
                   description,
+                  permission,
                   avatar,
                 });
               }
@@ -204,7 +236,7 @@ export function GeneralForm() {
           }}
         >
           {submitLoading && <Loader2Icon className="animate-spin" />}
-          {t('knowledgeConfiguration.save')}
+          {t('common.submit')}
         </Button>
       </div>
     </>

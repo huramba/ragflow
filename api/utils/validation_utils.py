@@ -365,15 +365,25 @@ class ParserConfig(Base):
     auto_questions: int = Field(default=0, ge=0, le=10)
     chunk_token_num: int = Field(default=128, ge=1, le=2048)
     delimiter: str = Field(default=r"\n", min_length=1)
-    graphrag: GraphragConfig | None = GraphragConfig()
+    graphrag: GraphragConfig | None = Field(default_factory=lambda: GraphragConfig())
     html4excel: bool = False
     layout_recognize: str = "DeepDOC"
-    raptor: RaptorConfig | None = None
+    raptor: RaptorConfig | None = Field(default_factory=lambda: RaptorConfig())
     tag_kb_ids: list[str] = Field(default_factory=list)
     topn_tags: int = Field(default=1, ge=1, le=10)
     filename_embd_weight: float | None = Field(default=None, ge=0.0, le=1.0)
     task_page_size: int | None = Field(default=None, ge=1)
     pages: list[list[int]] | None = None
+
+    @field_validator("graphrag", mode="before")
+    @classmethod
+    def validate_graphrag(cls, value: GraphragConfig | None) -> GraphragConfig:
+        return value or GraphragConfig()
+
+    @field_validator("raptor", mode="before")
+    @classmethod
+    def validate_raptor(cls, value: RaptorConfig | None) -> RaptorConfig:
+        return value or RaptorConfig()
 
 
 class CreateDatasetReq(Base):

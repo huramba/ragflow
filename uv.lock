@@ -1,5 +1,5 @@
 version = 1
-revision = 1
+revision = 2
 requires-python = ">=3.10, <3.13"
 resolution-markers = [
     "python_full_version >= '3.12' and sys_platform == 'darwin'",
@@ -4899,6 +4899,7 @@ dependencies = [
     { name = "infinity-emb" },
     { name = "infinity-sdk" },
     { name = "itsdangerous" },
+    { name = "jinja2" },
     { name = "json-repair" },
     { name = "langfuse" },
     { name = "markdown" },
@@ -5050,6 +5051,7 @@ requires-dist = [
     { name = "infinity-emb", specifier = ">=0.0.66,<0.0.67" },
     { name = "infinity-sdk", specifier = "==0.6.0.dev3" },
     { name = "itsdangerous", specifier = "==2.1.2" },
+    { name = "jinja2", specifier = ">=3.1.6" },
     { name = "json-repair", specifier = "==0.35.0" },
     { name = "langfuse", specifier = ">=2.60.0" },
     { name = "markdown", specifier = "==3.6" },

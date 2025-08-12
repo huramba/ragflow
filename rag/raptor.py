@@ -106,7 +106,7 @@ class RecursiveAbstractiveProcessing4TreeOrganizedRetrieval:
                     {"temperature": 0.3, "max_tokens": self._max_token},
                 )
             cnt = re.sub(
-                "(······\n由于长度的原因，回答被截断了，要继续吗？|For the content length reason, it stopped, continue?)",
+                "(······\nFor the content length reason, it stopped, continue?)",
                 "",
                 cnt,
             )

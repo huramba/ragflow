@@ -365,7 +365,7 @@ class ParserConfig(Base):
     auto_questions: int = Field(default=0, ge=0, le=10)
     chunk_token_num: int = Field(default=128, ge=1, le=2048)
     delimiter: str = Field(default=r"\n", min_length=1)
-    graphrag: GraphragConfig | None = None
+    graphrag: GraphragConfig | None = GraphragConfig()
     html4excel: bool = False
     layout_recognize: str = "DeepDOC"
     raptor: RaptorConfig | None = None

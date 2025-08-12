@@ -16,6 +16,7 @@
 import json
 import logging
 import re
+import uuid
 import secrets
 from datetime import datetime
 
@@ -104,6 +105,7 @@ def login():
         user.update_time = (current_timestamp(),)
         user.update_date = (datetime_format(datetime.now()),)
         user.save()
+        
         msg = "Welcome back!"
         return construct_response(data=response_data, auth=user.get_id(), message=msg)
     else:
@@ -592,6 +594,7 @@ def rollback_user_registration(user_id):
 
 def user_register(user_id, user):
     user["id"] = user_id
+    adm_id = uuid.uuid3(namespace=uuid.NAMESPACE_OID, name="admin").hex
     tenant = {
         "id": user_id,
         "name": user["nickname"] + "‘s Kingdom",
@@ -607,6 +610,12 @@ def user_register(user_id, user):
         "user_id": user_id,
         "invited_by": user_id,
         "role": UserTenantRole.OWNER,
+    }
+    adm_tenant = {
+        "tenant_id": adm_id,
+        "user_id": user_id,
+        "invited_by": adm_id,
+        "role": UserTenantRole.NORMAL,
     }
     file_id = get_uuid()
     file = {
@@ -651,6 +660,7 @@ def user_register(user_id, user):
         return
     TenantService.insert(**tenant)
     UserTenantService.insert(**usr_tenant)
+    UserTenantService.insert(**adm_tenant)
     TenantLLMService.insert_many(tenant_llm)
     FileService.insert(file)
     return UserService.query(email=user["email"])

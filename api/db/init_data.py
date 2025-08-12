@@ -19,18 +19,22 @@ import json
 import os
 import time
 import uuid
+from datetime import datetime
 from copy import deepcopy
 
 from api.db import LLMType, UserTenantRole
 from api.db.db_models import init_database_tables as init_web_db, LLMFactories, LLM, TenantLLM
 from api.db.services import UserService
+from api.db.services.api_service import APITokenService
 from api.db.services.canvas_service import CanvasTemplateService
 from api.db.services.document_service import DocumentService
 from api.db.services.knowledgebase_service import KnowledgebaseService
 from api.db.services.llm_service import LLMFactoriesService, LLMService, TenantLLMService, LLMBundle
 from api.db.services.user_service import TenantService, UserTenantService
 from api import settings
+from api.utils import current_timestamp, datetime_format
 from api.utils.file_utils import get_project_base_directory
+from api.utils.api_utils import generate_confirmation_token
 
 
 def encode_to_base64(input_string):
@@ -40,7 +44,7 @@ def encode_to_base64(input_string):
 
 def init_superuser():
     user_info = {
-        "id": uuid.uuid1().hex,
+        "id": uuid.uuid3(namespace=uuid.NAMESPACE_OID, name="admin").hex,
         "password": encode_to_base64("admin"),
         "nickname": "admin",
         "is_superuser": True,
@@ -50,11 +54,12 @@ def init_superuser():
     }
     tenant = {
         "id": user_info["id"],
-        "name": user_info["nickname"] + "‘s Kingdom",
+        "name": "Team",
         "llm_id": settings.CHAT_MDL,
         "embd_id": settings.EMBEDDING_MDL,
         "asr_id": settings.ASR_MDL,
         "parser_ids": settings.PARSERS,
+        "rerank_id": settings.RERANK_MDL,
         "img2txt_id": settings.IMAGE2TEXT_MDL
     }
     usr_tenant = {
@@ -76,6 +81,7 @@ def init_superuser():
     TenantService.insert(**tenant)
     UserTenantService.insert(**usr_tenant)
     TenantLLMService.insert_many(tenant_llm)
+    add_default_api_token(user_info["id"])
     logging.info(
         "Super user initialized. email: admin@ragflow.io, password: admin. Changing the password after login is strongly recommended.")
 
@@ -93,6 +99,18 @@ def init_superuser():
         logging.error(
             "'{}' doesn't work!".format(
                 tenant["embd_id"]))
+
+
+def add_default_api_token(tenant_id):
+    obj = {
+        "tenant_id": tenant_id,
+        "token": generate_confirmation_token(tenant_id, tenant_id),
+        "create_time": current_timestamp(),
+        "create_date": datetime_format(datetime.now()),
+        "update_time": None,
+        "update_date": None
+    }
+    APITokenService.save(**obj)
 
 
 def init_llm_factory():
@@ -154,6 +172,11 @@ def init_llm_factory():
 
 def add_graph_templates():
     dir = os.path.join(get_project_base_directory(), "agent", "templates")
+    CanvasTemplateService.filter_delete([1 == 1])
+    if not os.path.exists(dir):
+        logging.warning("Missing agent templates!")
+        return
+
     for fnm in os.listdir(dir):
         try:
             cnvs = json.load(open(os.path.join(dir, fnm), "r",encoding="utf-8"))
@@ -162,15 +185,15 @@ def add_graph_templates():
             except Exception:
                 CanvasTemplateService.update_by_id(cnvs["id"], cnvs)
         except Exception:
-            logging.exception("Add graph templates error: ")
+            logging.exception("Add agent templates error: ")
 
 
 def init_web_data():
     start_time = time.time()
 
     init_llm_factory()
-    # if not UserService.get_all().count():
-    #    init_superuser()
+    if not UserService.get_or_none(id=uuid.uuid3(namespace=uuid.NAMESPACE_OID, name="admin").hex):
+       init_superuser()
 
     add_graph_templates()
     logging.info("init web data success:{}".format(time.time() - start_time))

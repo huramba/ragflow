@@ -10,6 +10,7 @@ import enUS from 'antd/locale/en_US';
 import vi_VN from 'antd/locale/vi_VN';
 import zhCN from 'antd/locale/zh_CN';
 import zh_HK from 'antd/locale/zh_HK';
+import ruRU from 'antd/locale/ru_RU';
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -37,6 +38,7 @@ const AntLanguageMap = {
   vi: vi_VN,
   'pt-BR': pt_BR,
   de: deDE,
+  ru: ruRU
 };
 
 if (process.env.NODE_ENV === 'development') {

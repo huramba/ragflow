@@ -20,6 +20,7 @@ import re
 import tiktoken
 
 from api.utils.file_utils import get_project_base_directory
+from .template_factory import jinja_format
 
 
 def singleton(cls, *args, **kw):

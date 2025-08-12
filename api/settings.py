@@ -22,7 +22,7 @@ from enum import Enum, IntEnum
 import rag.utils
 import rag.utils.es_conn
 import rag.utils.infinity_conn
-import rag.utils.opensearch_coon
+import rag.utils.opensearch_conn
 from api.constants import RAG_FLOW_SERVICE_NAME
 from api.utils import decrypt_database_config, get_base_config
 from api.utils.file_utils import get_project_base_directory
@@ -73,6 +73,8 @@ SANDBOX_ENABLED = 0
 SANDBOX_HOST = None
 
 BUILTIN_EMBEDDING_MODELS = ["BAAI/bge-large-zh-v1.5@BAAI", "maidalun1020/bce-embedding-base_v1@Youdao"]
+
+EMBEDDING_DOCUMENT_PREFIX = os.getenv("EMBEDDING_DOCUMENT_PREFIX", "")
 
 def get_or_create_secret_key():
     secret_key = os.environ.get("RAGFLOW_SECRET_KEY")
@@ -164,7 +166,7 @@ def init_settings():
     elif lower_case_doc_engine == "infinity":
         docStoreConn = rag.utils.infinity_conn.InfinityConnection()
     elif lower_case_doc_engine == "opensearch":
-        docStoreConn = rag.utils.opensearch_coon.OSConnection()
+        docStoreConn = rag.utils.opensearch_conn.OSConnection()
     else:
         raise Exception(f"Not supported doc engine: {DOC_ENGINE}")
 

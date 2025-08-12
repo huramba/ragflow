@@ -661,7 +661,10 @@ def doc_upload_and_parse(conversation_id, file_objs, user_id):
         nonlocal embd_mdl, chunk_counts, token_counts
         vects = []
         for i in range(0, len(cnts), batch_size):
-            vts, c = embd_mdl.encode(cnts[i: i + batch_size])
+            vts, c = embd_mdl.encode([
+                settings.EMBEDDING_DOCUMENT_PREFIX + line
+                for line in cnts[i: i + batch_size]
+            ])
             vects.extend(vts.tolist())
             chunk_counts[doc_id] += len(cnts[i:i + batch_size])
             token_counts[doc_id] += c

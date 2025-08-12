@@ -52,7 +52,7 @@ AUTO_DATE_TIMESTAMP_FIELD_PREFIX = {"create", "start", "end", "update", "read_ac
 
 class TextFieldType(Enum):
     MYSQL = "LONGTEXT"
-    POSTGRES = "TEXT"
+    POSTGRESQL = "TEXT"
 
 
 class LongTextField(TextField):
@@ -245,12 +245,12 @@ class JsonSerializedField(SerializedField):
 
 class PooledDatabase(Enum):
     MYSQL = PooledMySQLDatabase
-    POSTGRES = PooledPostgresqlDatabase
+    POSTGRESQL = PooledPostgresqlDatabase
 
 
 class DatabaseMigrator(Enum):
     MYSQL = MySQLMigrator
-    POSTGRES = PostgresqlMigrator
+    POSTGRESQL = PostgresqlMigrator
 
 
 @singleton
@@ -399,7 +399,7 @@ class MysqlDatabaseLock:
 
 class DatabaseLock(Enum):
     MYSQL = MysqlDatabaseLock
-    POSTGRES = PostgresDatabaseLock
+    POSTGRESQL = PostgresDatabaseLock
 
 
 DB = BaseDataBase().database_connection

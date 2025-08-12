@@ -409,13 +409,14 @@ async def embedding(docs, mdl, parser_config=None, callback=None):
         parser_config = {}
     tts, cnts = [], []
     for d in docs:
-        tts.append(d.get("docnm_kwd", "Title"))
+        tts.append(settings.EMBEDDING_DOCUMENT_PREFIX + d.get("docnm_kwd", "Title"))
         c = "\n".join(d.get("question_kwd", []))
         if not c:
             c = d["content_with_weight"]
         c = re.sub(r"</?(table|td|caption|tr|th)( [^<>]{0,12})?>", " ", c)
         if not c:
             c = "None"
+        c = settings.EMBEDDING_DOCUMENT_PREFIX + c
         cnts.append(c)
 
     tk_count = 0
@@ -435,7 +436,7 @@ async def embedding(docs, mdl, parser_config=None, callback=None):
         callback(prog=0.7 + 0.2 * (i + 1) / len(cnts), msg="")
     cnts = cnts_
 
-    title_w = float(parser_config.get("filename_embd_weight", 0.1))
+    title_w = float(parser_config.get("filename_embd_weight") or 0.1)
     vects = (title_w * tts + (1 - title_w) *
              cnts) if len(tts) == len(cnts) else cnts
 

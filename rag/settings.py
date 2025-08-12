@@ -62,6 +62,7 @@ SVR_QUEUE_NAME = "rag_flow_svr_queue"
 SVR_CONSUMER_GROUP_NAME = "rag_flow_svr_task_broker"
 PAGERANK_FLD = "pagerank_fea"
 TAG_FLD = "tag_feas"
+EMBEDDING_QUERY_PREFIX = os.environ.get("EMBEDDING_QUERY_PREFIX", "")
 
 PARALLEL_DEVICES = 0
 try:

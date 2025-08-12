@@ -19,7 +19,7 @@ import math
 from collections import OrderedDict
 from dataclasses import dataclass
 
-from rag.settings import TAG_FLD, PAGERANK_FLD
+from rag.settings import TAG_FLD, PAGERANK_FLD, EMBEDDING_QUERY_PREFIX
 from rag.utils import rmSpace, get_float
 from rag.nlp import rag_tokenizer, query
 import numpy as np
@@ -49,7 +49,7 @@ class Dealer:
         group_docs: list[list] | None = None
 
     def get_vector(self, txt, emb_mdl, topk=10, similarity=0.1):
-        qv, _ = emb_mdl.encode_queries(txt)
+        qv, _ = emb_mdl.encode_queries(EMBEDDING_QUERY_PREFIX + txt)
         shape = np.array(qv).shape
         if len(shape) > 1:
             raise Exception(

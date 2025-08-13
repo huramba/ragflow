@@ -727,8 +727,8 @@ export default {
     },
     message: {
     registered: 'Зарегистрирован!',
-    logout: 'выход',
-    logged: 'вошел!',
+    logout: 'Вышли',
+    logged: 'Добро пожаловать!',
     pleaseSelectChunk: 'Выберите чанк!',
     registerDisabled: 'Регистрация отключена',
     modified: 'Изменено',

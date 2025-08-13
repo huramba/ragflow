@@ -64,6 +64,8 @@ PAGERANK_FLD = "pagerank_fea"
 TAG_FLD = "tag_feas"
 EMBEDDING_QUERY_PREFIX = os.environ.get("EMBEDDING_QUERY_PREFIX", "")
 
+PROMPT_BACKEND_URI = os.getenv("PROMPT_BACKEND_URI", "")
+
 PARALLEL_DEVICES = 0
 try:
     import torch.cuda

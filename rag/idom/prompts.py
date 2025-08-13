@@ -3,6 +3,8 @@ from rag import settings
 
 
 def load_prompts(tags: list[str] = [], limit: int = 1) -> list[str]:
+    if not settings.PROMPT_BACKEND_URI:
+        return []
     uri = f"{settings.PROMPT_BACKEND_URI}/v1/get_prompts"
     payload = { "limit": limit, "tags": tags }
     headers = { "Content-Type": "application/json" }

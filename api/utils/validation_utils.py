@@ -343,7 +343,14 @@ class RaptorConfig(Base):
         str,
         StringConstraints(strip_whitespace=True, min_length=1),
         Field(
-            default="Please summarize the following paragraphs. Be careful with the numbers, do not make things up. Paragraphs as following:\n      {cluster_content}\nThe above is the content you need to summarize."
+            default="""
+Пожалуйста, составь краткое содержание приведенных параграфов текста.
+Тщательно сохраняй все даты, числа, места, имена собственные и факты.
+Данные:
+======
+{cluster_content}
+======
+"""
         ),
     ]
     max_token: int = Field(default=256, ge=1, le=2048)

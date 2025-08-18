@@ -19,6 +19,7 @@ import umap
 import numpy as np
 from sklearn.mixture import GaussianMixture
 import trio
+from .constants import RAPTOR_SYSTEM_PROMPT
 
 from graphrag.utils import (
     get_llm_cache,
@@ -94,7 +95,7 @@ class RecursiveAbstractiveProcessing4TreeOrganizedRetrieval:
             )
             async with chat_limiter:
                 cnt = await self._chat(
-                    "You're a helpful assistant.",
+                    RAPTOR_SYSTEM_PROMPT,
                     [
                         {
                             "role": "user",

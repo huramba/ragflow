@@ -77,10 +77,10 @@ BUILTIN_EMBEDDING_MODELS = ["BAAI/bge-large-zh-v1.5@BAAI", "maidalun1020/bce-emb
 EMBEDDING_DOCUMENT_PREFIX = os.getenv("EMBEDDING_DOCUMENT_PREFIX", "")
 
 # langfuse for all
-LANGFUSE_FOR_ALL = int(os.getenv("LANGFUSE_FOR_ALL", "0"))
 LANGFUSE_HOST = os.getenv("LANGFUSE_HOST", "")
 LANGFUSE_PUBLIC_KEY = os.getenv("LANGFUSE_PUBLIC_KEY", "")
 LANGFUSE_SECRET_KEY = os.getenv("LANGFUSE_SECRET_KEY", "")
+LANGFUSE_SAMPLE_RATE = float(os.getenv("LANGFUSE_SAMPLE_RATE", "0.1"))
 
 def get_or_create_secret_key():
     secret_key = os.environ.get("RAGFLOW_SECRET_KEY")

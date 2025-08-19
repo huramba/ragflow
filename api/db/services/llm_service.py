@@ -217,7 +217,7 @@ class LLMBundle:
 
         langfuse_keys = TenantLangfuseService.filter_by_tenant(tenant_id=tenant_id)
         if langfuse_keys:
-            langfuse = Langfuse(public_key=langfuse_keys.public_key, secret_key=langfuse_keys.secret_key, host=langfuse_keys.host)
+            langfuse = Langfuse(public_key=langfuse_keys.public_key, secret_key=langfuse_keys.secret_key, host=langfuse_keys.host, sample_rate=settings.LANGFUSE_SAMPLE_RATE)
             if langfuse.auth_check():
                 self.langfuse = langfuse
                 self.trace = self.langfuse.trace(name=f"{self.llm_type}-{self.llm_name}")

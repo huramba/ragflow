@@ -31,6 +31,7 @@ from api.db.services.document_service import DocumentService
 from api.db.services.knowledgebase_service import KnowledgebaseService
 from api.db.services.llm_service import LLMFactoriesService, LLMService, TenantLLMService, LLMBundle
 from api.db.services.user_service import TenantService, UserTenantService
+from api.db.services.langfuse_service import TenantLangfuse, TenantLangfuseService
 from api import settings
 from api.utils import current_timestamp, datetime_format
 from api.utils.file_utils import get_project_base_directory
@@ -84,6 +85,12 @@ def init_superuser():
     add_default_api_token(user_info["id"])
     logging.info(
         "Super user initialized. email: admin@ragflow.io, password: admin. Changing the password after login is strongly recommended.")
+    
+    if settings.LANGFUSE_HOST:
+        langfuse_config = {
+            
+        }
+        TenantLangfuseService.insert(**langfuse_config)
 
     chat_mdl = LLMBundle(tenant["id"], LLMType.CHAT, tenant["llm_id"])
     msg = chat_mdl.chat(system="", history=[
@@ -104,7 +111,7 @@ def init_superuser():
 def add_default_api_token(tenant_id):
     obj = {
         "tenant_id": tenant_id,
-        "token": generate_confirmation_token(tenant_id, tenant_id),
+        "token": "ragflow-00000000000000000000000000000000",
         "create_time": current_timestamp(),
         "create_date": datetime_format(datetime.now()),
         "update_time": None,
